@@ -98,7 +98,8 @@ class Influx
     public function status(): array
     {
         $q = sprintf(
-            "SELECT COUNT(*) FROM %s", $this->database
+            "SELECT COUNT(*) FROM %s",
+            $this->database
         );
 
         $query = [
