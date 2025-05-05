@@ -37,7 +37,6 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         $this->addElement('text', 'influx_api_username', [
             'label' => t('InfluxDB Username'),
             'description' => t('The username for the database'),
-            'required' => true
         ]);
 
         $this->addElement('password', 'influx_api_password', [
@@ -49,7 +48,6 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         $this->addElement('number', 'influx_api_timeout', [
             'label' => t('HTTP timeout in seconds'),
             'description' => t('HTTP timeout for the API in seconds. Should be higher than 0'),
-            'renderPassword' => true,
         ]);
 
         $this->addElement('checkbox', 'influx_api_tls_insecure', [
