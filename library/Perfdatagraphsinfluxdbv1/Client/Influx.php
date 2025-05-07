@@ -62,7 +62,7 @@ class Influx
         }
 
         $q = sprintf(
-            "SELECT value, warn, crit FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
+            "SELECT value, warn, crit, unit FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
             $checkCommand,
             $selector,
             $from,

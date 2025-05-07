@@ -13,6 +13,7 @@ class InfluxRecord
     protected ?float $value;
     protected ?float $warning;
     protected ?float $critical;
+    protected ?string $unit;
 
     public function __construct(
         string $seriesname,
@@ -21,6 +22,7 @@ class InfluxRecord
         ?float $value,
         ?float $warn,
         ?float $crit,
+        ?string $unit,
     ) {
         $this->seriesname = $seriesname;
         $this->metricname = $metricname;
@@ -28,6 +30,7 @@ class InfluxRecord
         $this->value = $value;
         $this->warning = $warn;
         $this->critical = $crit;
+        $this->unit = $unit;
     }
 
     public function getSeriesName(): string
@@ -58,5 +61,10 @@ class InfluxRecord
     public function getCritical(): ?float
     {
         return $this->critical;
+    }
+
+    public function getUnit(): ?string
+    {
+        return $this->unit;
     }
 }
