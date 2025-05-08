@@ -57,8 +57,11 @@ class InfluxCsvParser
         $metricname = str_replace('metric=', '', $csv[1]);
         $timestamp = $csv[2];
         $value = $csv[3] === '' ? null: floatval($csv[3]);
+        $warn = $csv[4] === '' ? null: floatval($csv[4]);
+        $crit = $csv[5] === '' ? null: floatval($csv[5]);
+        $unit = $csv[6] === '' ? null: $csv[6];
 
-        $record = new InfluxRecord($seriesname, $metricname, $timestamp, $value);
+        $record = new InfluxRecord($seriesname, $metricname, $timestamp, $value, $warn, $crit, $unit);
 
         return $record;
     }

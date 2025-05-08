@@ -61,6 +61,9 @@ class Transformer
         $timestamps = [];
         // Create PerfdataSeries and add to PerfdataSet
         $valueseries = [];
+        $warningseries = [];
+        $criticalseries = [];
+        $unit = '';
 
         foreach ($stream->each() as $record) {
             $metricname = $record->getMetricName();
@@ -73,27 +76,57 @@ class Transformer
                 continue;
             }
 
-            if (!isset($valueseries[$metricname])) {
-                $valueseries[$metricname] = [];
+            if (!empty($record->getUnit()) && empty($unit)) {
+                $unit = $record->getUnit();
             }
 
-            if (!isset($timestamps[$metricname])) {
-                $timestamps[$metricname] = [];
-            }
+            if (!empty($record->getWarning())) {
+                if (!isset($warningseries[$metricname])) {
+                    $warningseries[$metricname] = [];
+                }
+                $warningseries[$metricname][] = $record->getWarning();
+            };
 
-            $timestamps[$metricname][] = $record->getTimestamp();
-            $valueseries[$metricname][] = $value = $record->getValue();
+            if (!empty($record->getCritical())) {
+                if (!isset($criticalseries[$metricname])) {
+                    $criticalseries[$metricname] = [];
+                }
+                $criticalseries[$metricname][] = $record->getCritical();
+            };
+
+            if (!empty($record->getValue())) {
+                if (!isset($valueseries[$metricname])) {
+                    $valueseries[$metricname] = [];
+                };
+
+                if (!isset($timestamps[$metricname])) {
+                    $timestamps[$metricname] = [];
+                }
+
+                $timestamps[$metricname][] = $record->getTimestamp();
+                $valueseries[$metricname][] = $value = $record->getValue();
+            }
         }
 
         // Add it to the PerfdataResponse
         foreach (array_keys($valueseries) as $metric) {
-            $s = new PerfdataSet($metric);
+            $s = new PerfdataSet($metric, $unit);
 
             $s->setTimestamps($timestamps[$metric]);
 
             if (array_key_exists($metric, $valueseries)) {
-                $series = new PerfdataSeries('value', $valueseries[$metric]);
-                $s->addSeries($series);
+                $values = new PerfdataSeries('value', $valueseries[$metric]);
+                $s->addSeries($values);
+            }
+
+            if (array_key_exists($metric, $warningseries) && !empty($warningseries)) {
+                $warnings = new PerfdataSeries('warning', $warningseries[$metric]);
+                $s->addSeries($warnings);
+            }
+
+            if (array_key_exists($metric, $criticalseries) && !empty($criticalseries)) {
+                $criticals = new PerfdataSeries('critical', $criticalseries[$metric]);
+                $s->addSeries($criticals);
             }
 
             $pfr->addDataset($s);
