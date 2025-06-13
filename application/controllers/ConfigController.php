@@ -35,19 +35,8 @@ class ConfigController extends CompatController
     {
         $config = Config::module('perfdatagraphsinfluxdbv1');
 
-        $c = [
-            'influx_api_url' => $config->get('influx', 'api_url'),
-            'influx_api_timeout' => (int) $config->get('influx', 'api_timeout'),
-            'influx_api_database' => $config->get('influx', 'api_database'),
-            'influx_api_username' => $config->get('influx', 'api_username'),
-            'influx_api_password' => $config->get('influx', 'api_password'),
-            'influx_api_tls_insecure' => (bool) $config->get('influx', 'api_tls_insecure'),
-        ];
-
         $form = (new PerfdataGraphsInfluxDBv1ConfigForm())
-            ->populate($c)
             ->setIniConfig($config);
-
         $form->handleRequest();
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('general'));
