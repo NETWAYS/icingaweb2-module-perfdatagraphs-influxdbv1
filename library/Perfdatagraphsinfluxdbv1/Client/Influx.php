@@ -24,6 +24,7 @@ class Influx
     /** @var $this \Icinga\Application\Modules\Module */
     protected $client = null;
 
+    protected string $URL;
     protected string $database;
     protected string $username;
     protected string $password;
@@ -37,10 +38,11 @@ class Influx
         bool $tlsVerify = true
     ) {
         $this->client = new Client([
-            'base_uri' => $baseURI,
             'timeout' => $timeout,
             'verify' => $tlsVerify
         ]);
+
+        $this->URL = rtrim($baseURI, '/');
 
         $this->database = $database;
         $this->username = $username;
@@ -84,7 +86,11 @@ class Influx
             ],
         ];
 
-        $response = $this->client->request('POST', $this::QUERY_ENDPOINT, $query);
+        $url = $this->URL . $this::QUERY_ENDPOINT;
+
+        Logger::debug('Calling query API at %s with query: %s', $url, $query);
+
+        $response = $this->client->request('POST', $url, $query);
 
         return $response;
     }
@@ -116,12 +122,10 @@ class Influx
             ]
         ];
 
+        $url = $this->URL . $this::QUERY_ENDPOINT;
+
         try {
-            $response = $this->client->request(
-                'GET',
-                $this::QUERY_ENDPOINT,
-                $query,
-            );
+            $response = $this->client->request('GET', $url, $query);
 
             return ['output' =>  $response->getBody()->getContents()];
         } catch (ConnectException $e) {
