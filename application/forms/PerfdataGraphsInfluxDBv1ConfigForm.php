@@ -142,7 +142,8 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         $database = $form->getValue('influx_api_database', '');
         $username = $form->getValue('influx_api_username', '');
         $password = $form->getValue('influx_api_password', '');
-        $tlsVerify = (bool) $form->getValue('influx_api_tls_insecure', false);
+        // Hint: We use a "skip TLS" logic in the UI, but Guzzle uses "verify TLS"
+        $tlsVerify = !(bool) $form->getValue('influx_api_tls_insecure', false);
 
         try {
             $c = new Influx($baseURI, $database, $username, $password, $timeout, $tlsVerify);
