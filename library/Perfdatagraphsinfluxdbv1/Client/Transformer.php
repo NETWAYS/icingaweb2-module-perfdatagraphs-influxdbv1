@@ -80,21 +80,21 @@ class Transformer
                 $unit = $record->getUnit();
             }
 
-            if (!empty($record->getWarning())) {
+            if (($record->getWarning() !== null)) {
                 if (!isset($warningseries[$metricname])) {
                     $warningseries[$metricname] = [];
                 }
                 $warningseries[$metricname][] = $record->getWarning();
             };
 
-            if (!empty($record->getCritical())) {
+            if (($record->getCritical() !== null)) {
                 if (!isset($criticalseries[$metricname])) {
                     $criticalseries[$metricname] = [];
                 }
                 $criticalseries[$metricname][] = $record->getCritical();
             };
 
-            if (!empty($record->getValue())) {
+            if (($record->getValue() !== null)) {
                 if (!isset($valueseries[$metricname])) {
                     $valueseries[$metricname] = [];
                 };
