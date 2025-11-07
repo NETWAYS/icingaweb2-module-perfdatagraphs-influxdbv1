@@ -9,6 +9,8 @@ use Icinga\Module\Perfdatagraphs\Hook\PerfdataSourceHook;
 use Icinga\Module\Perfdatagraphs\Model\PerfdataRequest;
 use Icinga\Module\Perfdatagraphs\Model\PerfdataResponse;
 
+use Icinga\Application\Benchmark;
+
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 
@@ -38,6 +40,8 @@ class PerfdataSource extends PerfdataSourceHook
             return $perfdataresponse;
         }
 
+        Benchmark::measure('Fetching performance data from InfluxDB v1');
+
         try {
             $response = $client->getMetrics(
                 $req->getHostname(),
@@ -59,12 +63,18 @@ class PerfdataSource extends PerfdataSourceHook
             return $perfdataresponse;
         }
 
-        // Transform into the PerfdataSourceHook format
+        Benchmark::measure('Fetched performance data from InfluxDB v1');
+
+        Benchmark::measure('Transforming performance data from InfluxDB v1');
+
         try {
+            // Transform into the PerfdataSourceHook format
             $perfdataresponse = Transformer::transform($response, $req->getIncludeMetrics(), $req->getExcludeMetrics());
         } catch (Exception $e) {
             $perfdataresponse->addError($e->getMessage());
         }
+
+        Benchmark::measure('Transformed performance data from InfluxDB v1');
 
         return $perfdataresponse;
     }
