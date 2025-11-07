@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.3
+
+- Fix TLS verify logic
+- Fix missing zero values
+- Add Icinga Web benchmark points
+
 ## v0.1.2
 
 - Use placeholder in forms
