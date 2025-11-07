@@ -80,20 +80,6 @@ class Transformer
                 $unit = $record->getUnit();
             }
 
-            if (($record->getWarning() !== null)) {
-                if (!isset($warningseries[$metricname])) {
-                    $warningseries[$metricname] = [];
-                }
-                $warningseries[$metricname][] = $record->getWarning();
-            };
-
-            if (($record->getCritical() !== null)) {
-                if (!isset($criticalseries[$metricname])) {
-                    $criticalseries[$metricname] = [];
-                }
-                $criticalseries[$metricname][] = $record->getCritical();
-            };
-
             if (($record->getValue() !== null)) {
                 if (!isset($valueseries[$metricname])) {
                     $valueseries[$metricname] = [];
@@ -105,6 +91,16 @@ class Transformer
 
                 $timestamps[$metricname][] = $record->getTimestamp();
                 $valueseries[$metricname][] = $value = $record->getValue();
+
+                if (!isset($warningseries[$metricname])) {
+                    $warningseries[$metricname] = [];
+                }
+                $warningseries[$metricname][] = $record->getWarning();
+
+                if (!isset($criticalseries[$metricname])) {
+                    $criticalseries[$metricname] = [];
+                }
+                $criticalseries[$metricname][] = $record->getCritical();
             }
         }
 
