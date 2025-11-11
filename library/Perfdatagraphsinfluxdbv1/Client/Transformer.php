@@ -108,7 +108,7 @@ class Transformer
         // Add it to the PerfdataResponse
         // TODO: We could probably do this in the previous loop
         foreach (array_keys($valueseries) as $metric) {
-            $s = new PerfdataSet($metric, $units[$metric]);
+            $s = new PerfdataSet($metric, $units[$metric] ?? '');
 
             $s->setTimestamps($timestamps[$metric]);
 
