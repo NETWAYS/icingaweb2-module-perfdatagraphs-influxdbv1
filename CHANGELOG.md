@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.4
+
+- Fix null values not being added for warn/crit
+- Fix units not being set correctly
+
 ## v0.1.3
 
 - Fix TLS verify logic
