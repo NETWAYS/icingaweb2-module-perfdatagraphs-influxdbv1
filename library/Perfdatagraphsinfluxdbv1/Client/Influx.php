@@ -28,6 +28,7 @@ class Influx
     protected string $database;
     protected string $username;
     protected string $password;
+    protected int $maxDataPoints;
 
     public function __construct(
         string $baseURI,
@@ -35,6 +36,7 @@ class Influx
         string $username,
         string $password,
         int $timeout = 2,
+        int $maxDataPoints = 10000,
         bool $tlsVerify = true
     ) {
         $this->client = new Client([
@@ -47,6 +49,7 @@ class Influx
         $this->database = $database;
         $this->username = $username;
         $this->password = $password;
+        $this->maxDataPoints = $maxDataPoints;
     }
 
     public function getMetrics(
@@ -56,6 +59,14 @@ class Influx
         string $from,
         bool $isHostCheck,
     ): Response {
+
+        $counts = $this->getMetricCount(
+            $hostName,
+            $serviceName,
+            $checkCommand,
+            $from,
+            $isHostCheck
+        );
 
         $selector = sprintf("hostname = '%s'", $hostName);
 
@@ -69,6 +80,20 @@ class Influx
             $selector,
             $from,
         );
+
+        if ($this->maxDataPoints > 0) {
+            $windowEverySeconds = $this->getAggregateWindow($from, $counts);
+            if ($windowEverySeconds > 0) {
+                $q = sprintf(
+                    "SELECT LAST(value) AS value, LAST(warn) AS warn, LAST(crit) AS crit, LAST(unit) AS unit
+                    FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY time(%ss), metric",
+                    $checkCommand,
+                    $selector,
+                    $from,
+                    $windowEverySeconds,
+                );
+            }
+        }
 
         $query = [
             'stream' => true,
@@ -93,6 +118,60 @@ class Influx
         $response = $this->client->request('POST', $url, $query);
 
         return $response;
+    }
+
+    public function getMetricCount(
+        string $hostName,
+        string $serviceName,
+        string $checkCommand,
+        string $from,
+        bool $isHostCheck,
+    ): array {
+
+        $selector = sprintf("hostname = '%s'", $hostName);
+
+        if (!$isHostCheck) {
+            $selector .= sprintf(" AND service = '%s'", $serviceName);
+        }
+
+        $q = sprintf(
+            "SELECT COUNT(value) FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
+            $checkCommand,
+            $selector,
+            $from,
+        );
+
+        $query = [
+            'stream' => true,
+            'headers' => [
+                'Accept' => 'application/csv',
+            ],
+            'auth' => [
+                $this->username,
+                $this->password,
+            ],
+            'query' => [
+                'db' => $this->database,
+                'q' => $q,
+                'epoch' => 's'
+            ],
+        ];
+
+        $url = $this->URL . $this::QUERY_ENDPOINT;
+
+        Logger::debug('Calling query API at %s with count query: %s', $url, $query);
+
+        $response = $this->client->request('POST', $url, $query);
+
+        $stream = new InfluxCsvParser($response->getBody(), true);
+
+        $metricStats = [];
+        foreach ($stream->each() as $record) {
+            $metricname = $record->getMetricName();
+            $metricStats[$metricname] = $record->getValue();
+        }
+
+        return $metricStats;
     }
 
     /**
@@ -144,6 +223,26 @@ class Influx
         return ['output' => 'Unknown error', 'error' => true];
     }
 
+   /**
+     * getAggregateWindow calculates the size of the aggregate window.
+     * If there is no need to aggregate it returns 0.
+     *
+     * @return int
+     */
+    protected function getAggregateWindow(string $from, array $count): int
+    {
+        $numOfDatapoints = array_pop($count);
+
+        $now = (new DateTime())->getTimestamp();
+        $from = intval($from);
+        // If there are datapoints than allowed we calculate an aggregation window size
+        if ($numOfDatapoints > $this->maxDataPoints) {
+            return (int) round(($now - $from) / $this->maxDataPoints);
+        }
+
+        return 0;
+    }
+
     /**
      * parseDuration parses the duration string from the frontend
      * into something we can use with the Influx API.
@@ -180,6 +279,7 @@ class Influx
             'api_database' => '',
             'api_username' => '',
             'api_password' => '',
+            'api_max_data_points' => 10000,
             'api_tls_insecure' => false,
         ];
 
@@ -196,12 +296,13 @@ class Influx
 
         $baseURI = rtrim($moduleConfig->get('influx', 'api_url', $default['api_url']), '/');
         $timeout = (int) $moduleConfig->get('influx', 'api_timeout', $default['api_timeout']);
+        $maxDataPoints = (int) $moduleConfig->get('influx', 'api_max_data_points', $default['api_max_data_points']);
         $database = $moduleConfig->get('influx', 'api_database', $default['api_database']);
         $username = $moduleConfig->get('influx', 'api_username', $default['api_username']);
         $password = $moduleConfig->get('influx', 'api_password', $default['api_password']);
         // Hint: We use a "skip TLS" logic in the UI, but Guzzle uses "verify TLS"
         $tlsVerify = !(bool) $moduleConfig->get('influx', 'api_tls_insecure', $default['api_tls_insecure']);
 
-        return new static($baseURI, $database, $username, $password, $timeout, $tlsVerify);
+        return new static($baseURI, $database, $username, $password, $timeout, $maxDataPoints, $tlsVerify);
     }
 }
