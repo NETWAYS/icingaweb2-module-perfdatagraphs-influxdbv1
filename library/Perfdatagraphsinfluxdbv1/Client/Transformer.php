@@ -76,33 +76,31 @@ class Transformer
                 continue;
             }
 
-            if (($record->getValue() !== null)) {
-                if (!isset($valueseries[$metricname])) {
-                    $valueseries[$metricname] = [];
-                };
+            if (!isset($valueseries[$metricname])) {
+                $valueseries[$metricname] = [];
+            };
 
-                if (!isset($timestamps[$metricname])) {
-                    $timestamps[$metricname] = [];
-                }
-
-                if (!isset($units[$metricname])) {
-                    $units[$metricname] = [];
-                };
-
-                $units[$metricname] = $record->getUnit();
-                $timestamps[$metricname][] = $record->getTimestamp();
-                $valueseries[$metricname][] = $value = $record->getValue();
-
-                if (!isset($warningseries[$metricname])) {
-                    $warningseries[$metricname] = [];
-                }
-                $warningseries[$metricname][] = $record->getWarning();
-
-                if (!isset($criticalseries[$metricname])) {
-                    $criticalseries[$metricname] = [];
-                }
-                $criticalseries[$metricname][] = $record->getCritical();
+            if (!isset($timestamps[$metricname])) {
+                $timestamps[$metricname] = [];
             }
+
+            if (!isset($units[$metricname])) {
+                $units[$metricname] = [];
+            };
+
+            $units[$metricname] = $record->getUnit();
+            $timestamps[$metricname][] = $record->getTimestamp();
+            $valueseries[$metricname][] = $value = $record->getValue();
+
+            if (!isset($warningseries[$metricname])) {
+                $warningseries[$metricname] = [];
+            }
+            $warningseries[$metricname][] = $record->getWarning();
+
+            if (!isset($criticalseries[$metricname])) {
+                $criticalseries[$metricname] = [];
+            }
+            $criticalseries[$metricname][] = $record->getCritical();
         }
 
         // Add it to the PerfdataResponse
