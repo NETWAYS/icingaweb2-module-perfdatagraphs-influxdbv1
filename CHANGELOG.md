@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0
+
+- Add `maxdatapoints` configuration for downsampling
+
 ## v0.1.4
 
 - Fix null values not being added for warn/crit
