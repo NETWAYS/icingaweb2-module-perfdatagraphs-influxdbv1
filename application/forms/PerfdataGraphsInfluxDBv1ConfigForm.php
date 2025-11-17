@@ -30,18 +30,18 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         ]);
 
         $this->addElement('text', 'influx_api_database', [
-            'label' => t('InfluxDB Database'),
+            'label' => t('InfluxDB database'),
             'description' => t('the database for the performance data'),
             'required' => true
         ]);
 
         $this->addElement('text', 'influx_api_username', [
-            'label' => t('InfluxDB Username'),
+            'label' => t('InfluxDB username'),
             'description' => t('The username for the database'),
         ]);
 
         $this->addElement('password', 'influx_api_password', [
-            'label' => t('InfluxDB Password'),
+            'label' => t('InfluxDB password'),
             'description' => t('The password for the database'),
             'renderPassword' => true,
         ]);
