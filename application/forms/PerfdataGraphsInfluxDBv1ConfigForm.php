@@ -30,18 +30,18 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         ]);
 
         $this->addElement('text', 'influx_api_database', [
-            'label' => t('InfluxDB Database'),
+            'label' => t('InfluxDB database'),
             'description' => t('the database for the performance data'),
             'required' => true
         ]);
 
         $this->addElement('text', 'influx_api_username', [
-            'label' => t('InfluxDB Username'),
+            'label' => t('InfluxDB username'),
             'description' => t('The username for the database'),
         ]);
 
         $this->addElement('password', 'influx_api_password', [
-            'label' => t('InfluxDB Password'),
+            'label' => t('InfluxDB password'),
             'description' => t('The password for the database'),
             'renderPassword' => true,
         ]);
@@ -50,6 +50,18 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
             'label' => t('HTTP timeout in seconds'),
             'description' => t('HTTP timeout for the API in seconds. Should be higher than 0'),
             'placeholder' => 10,
+        ]);
+
+        $this->addElement('number', 'influx_api_max_data_points', [
+            'label' => t('The maximum numbers of datapoints each series returns'),
+            'description' => t(' '),
+            'description'   => t(
+                'The maximum numbers of datapoints each series returns.'
+                    . ' If there are more datapoints the module will use the GROUP BY function to downsample to this number.'
+                    . ' You can disable aggregation by setting this to 0.'
+            ),
+            'required' => false,
+            'placeholder' => 10000,
         ]);
 
         $this->addElement('checkbox', 'influx_api_tls_insecure', [
