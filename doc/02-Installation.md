@@ -28,8 +28,8 @@ To install this module, follow the setup instructions for the **extras** reposit
 |-----------|----------------|-------------------------------------------|
 | influx_api_url             | The URL for InfluxDB including the scheme | `http://localhost:8086` |
 | influx_api_database        | the database for the performance data     |  |
-| influx_api_username        | The username for the database             |  |
-| influx_api_password        | The password for the database             |  |
+| influx_api_username        | The basic auth username for the database  |  |
+| influx_api_password        | The basic auth password for the database  |  |
 | influx_api_timeout         | HTTP timeout for the API in seconds. Should be higher than 0  | `10` (seconds) |
 | influx_api_max_data_points | The maximum numbers of datapoints each series returns. If there are more datapoints the module will use the GROUP BY function to downsample to this number. You can disable aggregation by setting this to 0. | `10000` |
 | influx_api_tls_insecure    | Skip the TLS verification  | `false` (unchecked) |
