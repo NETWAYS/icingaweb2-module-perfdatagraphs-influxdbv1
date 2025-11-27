@@ -39,7 +39,7 @@ class Influx
         string $password,
         string $hostnameTag,
         string $servicenameTag,
-        int $timeout = 2,
+        int $timeout = 10,
         int $maxDataPoints = 10000,
         bool $tlsVerify = true
     ) {
@@ -58,6 +58,17 @@ class Influx
         $this->maxDataPoints = $maxDataPoints;
     }
 
+    protected function generateSelect(bool $isHostCheck, string $hostName, string $serviceName): string
+    {
+        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
+
+        if (!$isHostCheck) {
+            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
+        }
+
+        return $selector;
+    }
+
     public function getMetrics(
         string $hostName,
         string $serviceName,
@@ -74,11 +85,7 @@ class Influx
             $isHostCheck
         );
 
-        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
-
-        if (!$isHostCheck) {
-            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
-        }
+        $selector = $this->generateSelect($isHostCheck, $hostName, $serviceName);
 
         $q = sprintf(
             "SELECT value, warn, crit, unit FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
@@ -133,12 +140,7 @@ class Influx
         string $from,
         bool $isHostCheck,
     ): array {
-
-        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
-
-        if (!$isHostCheck) {
-            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
-        }
+        $selector = $this->generateSelect($isHostCheck, $hostName, $serviceName);
 
         $q = sprintf(
             "SELECT COUNT(value) FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
@@ -233,7 +235,9 @@ class Influx
      * getAggregateWindow calculates the size of the aggregate window.
      * If there is no need to aggregate it returns 0.
      *
-     * @return int
+     * @param string $from timestamp in seconds
+     * @param array $count count of datapoints
+     * @return int size of the aggregation window in seconds
      */
     protected function getAggregateWindow(string $from, array $count): int
     {
