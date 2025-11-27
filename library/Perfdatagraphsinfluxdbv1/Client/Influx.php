@@ -28,6 +28,8 @@ class Influx
     protected string $database;
     protected string $username;
     protected string $password;
+    protected string $hostnameTag;
+    protected string $servicenameTag;
     protected int $maxDataPoints;
 
     public function __construct(
@@ -35,6 +37,8 @@ class Influx
         string $database,
         string $username,
         string $password,
+        string $hostnameTag,
+        string $servicenameTag,
         int $timeout = 2,
         int $maxDataPoints = 10000,
         bool $tlsVerify = true
@@ -49,6 +53,8 @@ class Influx
         $this->database = $database;
         $this->username = $username;
         $this->password = $password;
+        $this->hostnameTag = $hostnameTag;
+        $this->servicenameTag = $servicenameTag;
         $this->maxDataPoints = $maxDataPoints;
     }
 
@@ -68,10 +74,10 @@ class Influx
             $isHostCheck
         );
 
-        $selector = sprintf("hostname = '%s'", $hostName);
+        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
 
         if (!$isHostCheck) {
-            $selector .= sprintf(" AND service = '%s'", $serviceName);
+            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
         }
 
         $q = sprintf(
@@ -128,10 +134,10 @@ class Influx
         bool $isHostCheck,
     ): array {
 
-        $selector = sprintf("hostname = '%s'", $hostName);
+        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
 
         if (!$isHostCheck) {
-            $selector .= sprintf(" AND service = '%s'", $serviceName);
+            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
         }
 
         $q = sprintf(
@@ -287,6 +293,8 @@ class Influx
             'api_password' => '',
             'api_max_data_points' => 10000,
             'api_tls_insecure' => false,
+            'writer_host_name_template_tag' => 'hostname',
+            'writer_service_name_template_tag' => 'service',
         ];
 
         // Try to load the configuration
@@ -306,9 +314,21 @@ class Influx
         $database = $moduleConfig->get('influx', 'api_database', $default['api_database']);
         $username = $moduleConfig->get('influx', 'api_username', $default['api_username']);
         $password = $moduleConfig->get('influx', 'api_password', $default['api_password']);
+        $hostnameTag = $moduleConfig->get('influx', 'writer_host_name_template_tag', $default['writer_host_name_template_tag']);
+        $servicenameTag = $moduleConfig->get('influx', 'writer_service_name_template_tag', $default['writer_service_name_template_tag']);
         // Hint: We use a "skip TLS" logic in the UI, but Guzzle uses "verify TLS"
         $tlsVerify = !(bool) $moduleConfig->get('influx', 'api_tls_insecure', $default['api_tls_insecure']);
 
-        return new static($baseURI, $database, $username, $password, $timeout, $maxDataPoints, $tlsVerify);
+        return new static(
+            baseURI: $baseURI,
+            database: $database,
+            username: $username,
+            password: $password,
+            hostnameTag: $hostnameTag,
+            servicenameTag: $servicenameTag,
+            timeout: $timeout,
+            maxDataPoints: $maxDataPoints,
+            tlsVerify: $tlsVerify
+        );
     }
 }
