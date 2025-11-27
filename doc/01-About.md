@@ -3,3 +3,5 @@
 A InfluxDBv1 backend for the Icinga Web Performance Data Graphs Module.
 
 This backend uses `InfluxQL` to fetch performance data from an InfluxDB v1 database.
+
+It is meant to be used with the Icinga2 InfluxdbWriter.
