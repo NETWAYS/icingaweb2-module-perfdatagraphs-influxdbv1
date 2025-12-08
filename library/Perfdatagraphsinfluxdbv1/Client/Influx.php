@@ -60,10 +60,10 @@ class Influx
 
     protected function generateSelect(bool $isHostCheck, string $hostName, string $serviceName): string
     {
-        $selector = sprintf("%s = '%s'", $this->hostnameTag, $hostName);
+        $selector = sprintf("%s = '%s'", $this->hostnameTag, addslashes($hostName));
 
         if (!$isHostCheck) {
-            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, $serviceName);
+            $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, addslashes($serviceName));
         }
 
         return $selector;
@@ -89,7 +89,7 @@ class Influx
 
         $q = sprintf(
             "SELECT value, warn, crit, unit FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
-            $checkCommand,
+            addslashes($checkCommand),
             $selector,
             $from,
         );
@@ -100,7 +100,7 @@ class Influx
                 $q = sprintf(
                     "SELECT LAST(value) AS value, LAST(warn) AS warn, LAST(crit) AS crit, LAST(unit) AS unit
                     FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY time(%ss), metric",
-                    $checkCommand,
+                    addslashes($checkCommand),
                     $selector,
                     $from,
                     $windowEverySeconds,
@@ -144,7 +144,7 @@ class Influx
 
         $q = sprintf(
             "SELECT COUNT(value) FROM \"%s\" WHERE (%s) AND time >= %ds AND time <= now() GROUP BY metric",
-            $checkCommand,
+            addslashes($checkCommand),
             $selector,
             $from,
         );
