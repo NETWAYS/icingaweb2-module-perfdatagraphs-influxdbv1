@@ -64,6 +64,8 @@ class Influx
 
         if (!$isHostCheck) {
             $selector .= sprintf(" AND %s = '%s'", $this->servicenameTag, addslashes($serviceName));
+        } else {
+            $selector .= sprintf(" AND %s = ''", $this->servicenameTag);
         }
 
         return $selector;
