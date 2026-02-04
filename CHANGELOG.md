@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.1
+
+- Fix host query to exclude services to show up
+- Fix missing connections options for config form
+
 ## v0.3.0
 
 - Add configuration option to set host and service tag names
