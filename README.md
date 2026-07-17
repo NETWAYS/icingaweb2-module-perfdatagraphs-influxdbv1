@@ -6,16 +6,13 @@ This module requires the frontend module:
 
 - https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs
 
+Other Icinga and Influx integrations we provide:
+
+* https://github.com/NETWAYS/check_influxdb
+
 ## Installation Requirements
 
-* PHP version ≥ 8.0
+* PHP version ≥ 8.2
 * Icinga2 InfluxdbWriter
 * IcingaDB or IDO Database
 * InfluxDB v1
-
-## Known Issues
-
-### Time range buttons do not adjust when no data is available
-
-When a time range is selected for which there is no data yet
-(e.g. a newly created service) the x-axis does not adjust.

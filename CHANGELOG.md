@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.0
+
+- Raise minimum requirements to PHP 8.2
+- Add mTLS authentication option
+
 ## v0.3.1
 
 - Fix host query to exclude services to show up
