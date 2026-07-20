@@ -8,7 +8,7 @@
         "psr-4": {
             "GuzzleHttp\\Psr7\\": "_libraries/vendor/vendor/guzzlehttp/psr7/src/",
             "Icinga\\": "_icingaweb2/library/Icinga/",
-            "Icinga\\Module\\Perfdatagraphs\\": "_libraries/perfdatagraphs/library/Perfdatagraphs",
+            "Icinga\\Module\\Perfdatagraphs\\": "_libraries/perfdatagraphs/library/Perfdatagraphs/",
             "Icinga\\Module\\Perfdatagraphsinfluxdbv1\\": "library/Perfdatagraphsinfluxdbv1/",
             "Psr\\Http\\Message\\": "_libraries/vendor/vendor/psr/http-message/src/"
         }
