@@ -299,15 +299,13 @@ class Influx
     public static function parseDuration(\DateTime $now, string $duration): string
     {
         try {
-            $int = new DateInterval($duration);
+            $interval = new DateInterval($duration);
         } catch (Exception $e) {
             Logger::error('Failed to parse date interval: %s', $e);
-            $int = new DateInterval('PT12H');
+            $interval = new DateInterval('PT12H');
         }
 
-        $ts = $now->sub($int);
-
-        return $ts->getTimestamp();
+        return (clone $now)->sub($interval)->getTimestamp();
     }
 
     /**
