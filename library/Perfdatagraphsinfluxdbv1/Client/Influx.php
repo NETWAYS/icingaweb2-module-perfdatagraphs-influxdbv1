@@ -67,7 +67,7 @@ class Influx
         }
 
         if ($method === 'token') {
-            $t = $this->auth['tokentype'] ?? 'Bearer';
+            $t = $this->auth['tokentype'] ?? 'Token';
             $v = $this->auth['tokenvalue'] ?? '';
             $authOptions['headers'] = [
                     'Authorization' =>  $t .' '. $v,
@@ -325,7 +325,7 @@ class Influx
             'writer_host_name_template_tag' => 'hostname',
             'writer_service_name_template_tag' => 'service',
             'api_auth_method' => 'none',
-            'api_auth_tokentype' => 'Bearer',
+            'api_auth_tokentype' => 'Token',
             'api_auth_tokenvalue' => '',
             'api_auth_username' => '',
             'api_auth_password' => '',
