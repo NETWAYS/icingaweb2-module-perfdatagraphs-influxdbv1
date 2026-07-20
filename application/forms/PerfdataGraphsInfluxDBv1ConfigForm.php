@@ -35,6 +35,18 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
             'required' => true
         ]);
 
+        $this->addElement('select', 'influx_api_auth_method', [
+            'label' => 'API authentication method',
+            'description' => 'Authentication method to use for the API',
+            'multiOptions' => [
+                'none' => t('None'),
+                'basic' => 'Basic Auth',
+                'token' => 'Token',
+            ],
+            'class' => 'autosubmit',
+            'required' => false,
+        ]);
+
         if (isset($formData['influx_api_auth_method']) && $formData['influx_api_auth_method'] === 'basic') {
             $this->addElement('text', 'influx_api_auth_username', [
                 'label' => t('HTTP basic auth username'),
@@ -53,8 +65,8 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         if (isset($formData['influx_api_auth_method']) && $formData['influx_api_auth_method'] === 'token') {
             $this->addElement('text', 'influx_api_auth_tokentype', [
                 'label' => t('Token type for the Authorization header'),
-                'description' => t('API Token type for the Authorization header (default: Bearer)'),
-                'value' => 'Bearer',
+                'description' => t('API Token type for the Authorization header (default: Token)'),
+                'value' => 'Token',
             ]);
 
             $this->addElement('password', 'influx_api_auth_tokenvalue', [
@@ -217,7 +229,7 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         $database = $form->getValue('influx_api_database', '');
         // Auth values
         $authMethod = $form->getValue('influx_api_auth_method', 'none');
-        $authTokenType = $form->getValue('influx_api_auth_tokentype', 'Bearer');
+        $authTokenType = $form->getValue('influx_api_auth_tokentype', 'Token');
         $authTokenValue = $form->getValue('influx_api_auth_tokenvalue', '');
         $authUsername = $form->getValue('influx_api_auth_username', '');
         $authPassword = $form->getValue('influx_api_auth_password', '');
