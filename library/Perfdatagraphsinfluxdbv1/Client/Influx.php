@@ -346,7 +346,7 @@ class Influx
                     baseURI: $default['api_url'],
                     timeout: $default['api_timeout'],
                     tlsVerify: true,
-                    maxDataPoints: $default['max_data_points'],
+                    maxDataPoints: $default['api_max_data_points'],
                     hostnameTag: $default['writer_host_name_template_tag'],
                     servicenameTag: $default['writer_service_name_template_tag'],
                     auth: [],
