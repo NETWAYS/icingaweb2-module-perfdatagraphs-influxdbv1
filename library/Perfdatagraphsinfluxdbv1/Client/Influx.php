@@ -157,7 +157,7 @@ class Influx
 
         $url = $this->URL . $this::QUERY_ENDPOINT;
 
-        $query = array_merge($query, $this->getAuth());
+        $query = array_merge_recursive($query, $this->getAuth());
 
         Logger::debug('Calling query API at %s with query: %s', $url, $query);
 
@@ -196,7 +196,7 @@ class Influx
 
         $url = $this->URL . $this::QUERY_ENDPOINT;
 
-        $query = array_merge($query, $this->getAuth());
+        $query = array_merge_recursive($query, $this->getAuth());
 
         Logger::debug('Calling query API at %s with count query: %s', $url, $query);
 
@@ -238,7 +238,7 @@ class Influx
 
         $url = $this->URL . $this::QUERY_ENDPOINT;
 
-        $query = array_merge($query, $this->getAuth());
+        $query = array_merge_recursive($query, $this->getAuth());
 
         try {
             $response = $this->client->request('GET', $url, $query);

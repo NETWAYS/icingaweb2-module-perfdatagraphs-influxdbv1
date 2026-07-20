@@ -105,7 +105,7 @@ class Transformer
 
             $units[$metricname] = $record->getUnit();
             $timestamps[$metricname][] = $record->getTimestamp();
-            $valueseries[$metricname][] = $value = $record->getValue();
+            $valueseries[$metricname][] = $record->getValue();
 
             if (!isset($warningseries[$metricname])) {
                 $warningseries[$metricname] = [];
@@ -132,12 +132,12 @@ class Transformer
                 $s->addSeries($values);
             }
 
-            if (array_key_exists($metric, $warningseries) && !empty($warningseries)) {
+            if (array_key_exists($metric, $warningseries) && !empty($warningseries[$metric])) {
                 $warnings = new PerfdataSeries('warning', $warningseries[$metric]);
                 $s->addSeries($warnings);
             }
 
-            if (array_key_exists($metric, $criticalseries) && !empty($criticalseries)) {
+            if (array_key_exists($metric, $criticalseries) && !empty($criticalseries[$metric])) {
                 $criticals = new PerfdataSeries('critical', $criticalseries[$metric]);
                 $s->addSeries($criticals);
             }
