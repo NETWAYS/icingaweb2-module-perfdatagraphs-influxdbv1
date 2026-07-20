@@ -25,7 +25,7 @@ class InfluxCsvParser
     public function each()
     {
         try {
-            while (($csv = fgetcsv($this->resource)) !== false) {
+            while (($csv = fgetcsv($this->resource, escape: "\\")) !== false) {
                 if (!isset($csv) || (count($csv) == 1 && $csv[0] == null)) {
                     continue;
                 }

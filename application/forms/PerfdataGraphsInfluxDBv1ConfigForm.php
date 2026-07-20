@@ -35,16 +35,59 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
             'required' => true
         ]);
 
-        $this->addElement('text', 'influx_api_username', [
-            'label' => t('InfluxDB basic auth username'),
-            'description' => t('The basic auth username for the database'),
+        if (isset($formData['influx_api_auth_method']) && $formData['influx_api_auth_method'] === 'basic') {
+            $this->addElement('text', 'influx_api_auth_username', [
+                'label' => t('HTTP basic auth username'),
+                'description' => t('The user for HTTP basic auth'),
+                'required' => true,
+            ]);
+
+            $this->addElement('password', 'influx_api_auth_password', [
+                'label' => t('HTTP basic auth password'),
+                'description' => t('The password for HTTP basic auth'),
+                'renderPassword' => true,
+                'required' => true,
+            ]);
+        }
+
+        if (isset($formData['influx_api_auth_method']) && $formData['influx_api_auth_method'] === 'token') {
+            $this->addElement('text', 'influx_api_auth_tokentype', [
+                'label' => t('Token type for the Authorization header'),
+                'description' => t('API Token type for the Authorization header (default: Bearer)'),
+                'value' => 'Bearer',
+            ]);
+
+            $this->addElement('password', 'influx_api_auth_tokenvalue', [
+                'label' => t('Token for the Authorization header'),
+                'description' => t('API Token for the Authorization header'),
+                'renderPassword' => true,
+                'required' => true,
+            ]);
+        }
+
+        $this->addElement('checkbox', 'influx_api_auth_mtls', [
+            'label' => t('Use client certificate (mTLS)'),
+            'description' => t('Use client certificate (mTLS) for the connection'),
+            'class' => 'autosubmit',
         ]);
 
-        $this->addElement('password', 'influx_api_password', [
-            'label' => t('InfluxDB basic auth password'),
-            'description' => t('The basic auth password for the database'),
-            'renderPassword' => true,
-        ]);
+        if (isset($formData['influx_api_auth_mtls']) && $formData['influx_api_auth_mtls'] === '1') {
+            $this->addElement('text', 'influx_api_auth_mtls_cert', [
+                'label' => t('mTLS client certificate path'),
+                'description' => t('Path to the client certificate'),
+                'required' => true,
+            ]);
+            $this->addElement('text', 'influx_api_auth_mtls_key', [
+                'label' => t('mTLS client key path'),
+                'description' => t('Path to the client key'),
+                'required' => true,
+            ]);
+            $this->addElement('text', 'influx_api_auth_mtls_ca', [
+                'label' => t('mTLS client CA path'),
+                'description' => t('Path to the CA. Defaults to system CA'),
+                'required' => false,
+            ]);
+        }
 
         $this->addElement('number', 'influx_api_timeout', [
             'label' => t('HTTP timeout in seconds'),
@@ -172,25 +215,45 @@ class PerfdataGraphsInfluxDBv1ConfigForm extends ConfigForm
         $baseURI = $form->getValue('influx_api_url', 'http://localhost:8086');
         $timeout = (int) $form->getValue('influx_api_timeout', 10);
         $database = $form->getValue('influx_api_database', '');
-        $username = $form->getValue('influx_api_username', '');
-        $password = $form->getValue('influx_api_password', '');
+        // Auth values
+        $authMethod = $form->getValue('influx_api_auth_method', 'none');
+        $authTokenType = $form->getValue('influx_api_auth_tokentype', 'Bearer');
+        $authTokenValue = $form->getValue('influx_api_auth_tokenvalue', '');
+        $authUsername = $form->getValue('influx_api_auth_username', '');
+        $authPassword = $form->getValue('influx_api_auth_password', '');
+        // mTLS values
+        $authMTLS = $form->getValue('influx_api_auth_mtls', false);
+        $authMTLSCert = $form->getValue('influx_api_auth_mtls_cert', '');
+        $authMTLSKey = $form->getValue('influx_api_auth_mtls_key', '');
+        $authMTLSCA = $form->getValue('influx_api_auth_mtls_ca', '');
         // Hint: We use a "skip TLS" logic in the UI, but Guzzle uses "verify TLS"
         $tlsVerify = !(bool) $form->getValue('influx_api_tls_insecure', false);
         $maxDataPoints = (int) $form->getValue('influx_api_max_data_points', 10000);
         $hostnameTag = $form->getValue('influx_writer_host_name_template_tag', 'hostname');
         $servicenameTag = $form->getValue('influx_writer_service_name_template_tag', 'service');
 
+        $auth = [
+            'method' => mb_strtolower($authMethod),
+            'tokentype' => $authTokenType,
+            'tokenvalue' => $authTokenValue,
+            'username' => $authUsername,
+            'password' => $authPassword,
+            'mtls' => $authMTLS,
+            'mtls_cert' => $authMTLSCert,
+            'mtls_key' => $authMTLSKey,
+            'mtls_ca' => $authMTLSCA,
+        ];
+
         try {
             $c = new Influx(
                 baseURI: $baseURI,
                 database: $database,
-                username: $username,
-                password: $password,
                 hostnameTag: $hostnameTag,
                 servicenameTag: $servicenameTag,
                 timeout: $timeout,
                 maxDataPoints: $maxDataPoints,
-                tlsVerify: $tlsVerify
+                tlsVerify: $tlsVerify,
+                auth: $auth,
             );
         } catch (Exception $e) {
             return ['output' => 'General error: ' . $e->getMessage(), 'error' => true];
