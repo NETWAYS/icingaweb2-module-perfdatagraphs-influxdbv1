@@ -3,7 +3,10 @@
 ## v1.0.0
 
 - Raise minimum requirements to PHP 8.2
-- Add mTLS authentication option
+
+**Breaking Changes**
+
+- Add mTLS and token auth (changes configuration option names). See documentation for new field names.
 
 ## v0.3.1
 
