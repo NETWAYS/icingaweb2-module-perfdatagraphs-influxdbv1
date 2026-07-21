@@ -38,12 +38,12 @@ class Transformer
      * isExcluded checks if the given metricname is in the given list
      *
      * @param string $metricname name of the metric to find
-     * @param array $excludeMetrics metrics to exlude from the response
+     * @param array $excludeMetrics metrics to exclude from the response
      * @return bool
      */
     public static function isExcluded($metricname, array $excludeMetrics = []): bool
     {
-        // None are exlucded if not set
+        // None are exclucded if not set
         if (count($excludeMetrics) === 0) {
             return false;
         }
