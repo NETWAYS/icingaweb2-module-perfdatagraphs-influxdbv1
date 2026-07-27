@@ -9,11 +9,10 @@ use GuzzleHttp\Psr7\Stream;
  */
 class InfluxCsvParser
 {
-    private $response;
+    private Stream $response;
     private $resource;
     private $stream;
-
-    public $closed;
+    public bool $closed;
 
     public function __construct(Stream $response)
     {
