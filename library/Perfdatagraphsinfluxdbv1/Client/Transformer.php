@@ -122,7 +122,7 @@ class Transformer
         // We could probably do this in the previous loop, I did a bit of
         // profiling and it did not make much of a difference. But I'm
         // not a PHP Pro, so if someone wants to try it feel free.
-        foreach (array_keys($valueseries) as $metric) {
+        foreach ($valueseries as $metric => $values) {
             $s = new PerfdataSet($metric, $units[$metric] ?? '');
 
             $s->setTimestamps($timestamps[$metric]);

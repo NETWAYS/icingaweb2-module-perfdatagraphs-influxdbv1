@@ -271,7 +271,7 @@ class Influx
     protected function getAggregateWindow(string $from, array $count): int
     {
         // Since all time series are part of the same check, they have the same count
-        $numOfDatapoints = array_pop($count);
+        $numOfDatapoints = end($count);
 
         // If there are less datapoints than the max, we can just return
         if ($numOfDatapoints < $this->maxDataPoints) {
