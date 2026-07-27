@@ -71,7 +71,7 @@ class Transformer
             return $pfr;
         }
 
-        $stream = new InfluxCsvParser($response->getBody(), true);
+        $stream = new InfluxCsvParser(response: $response->getBody());
 
         $timestamps = [];
         // Create PerfdataSeries and add to PerfdataSet
