@@ -33,8 +33,10 @@ To install this module, follow the setup instructions for the **extras** reposit
 | api_timeout         | HTTP timeout for the API in seconds. Should be higher than 0  | `10` (seconds) |
 | api_max_data_points | The maximum numbers of datapoints each series returns. If there are more datapoints the module will use the GROUP BY function to downsample to this number. | `10000` |
 | api_tls_insecure    | Skip the TLS verification  | `false` (unchecked) |
-| writer_host_name_template_tag    | The configured tag name for the 'host name' in Icinga 2 InfluxWriter  | `hostname` |
-| writer_service_name_template_tag | The configured tag name for the 'service name' in Icinga 2 InfluxWriter  | `service` |
+| writer_host_name_template_tag    | The configured tag name for the 'host name' in Icinga2 InfluxWriter  | `hostname` |
+| writer_host_name_template_measurement    | The configured measurement template for the 'host' in Icinga2 InfluxWriter  | `$host.check_command$` |
+| writer_service_name_template_tag | The configured tag name for the 'service name' in Icinga2 InfluxWriter  | `service` |
+| writer_service_name_template_measurement | The configured measurement template for the 'service' in Icinga2 InfluxWriter  | `$service.check_command$` |
 | api_auth_method     | Authentication method to use for the API                                                                  | none (none,basic,token) |
 | api_auth_username    | HTTP basic auth username                                                                                 |   |
 | api_auth_password    | HTTP basic auth password                                                                                 |   |
