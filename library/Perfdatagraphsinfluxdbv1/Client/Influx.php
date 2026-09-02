@@ -280,15 +280,10 @@ class Influx
      */
     public function status(): array
     {
-        $q = sprintf(
-            "SELECT COUNT(*) FROM %s",
-            $this->database
-        );
-
         $query = [
             'query' => [
                 'db' => $this->database,
-                'q' => $q,
+                'q' => "SHOW DATABASES",
             ],
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -373,7 +368,7 @@ class Influx
      * @param Config $moduleConfig configuration to load (used for testing)
      * @return $this
      */
-    public static function fromConfig(Config $moduleConfig = null): Influx
+    public static function fromConfig(?Config $moduleConfig = null): Influx
     {
         $default = [
             'api_url' => 'http://localhost:8086',
