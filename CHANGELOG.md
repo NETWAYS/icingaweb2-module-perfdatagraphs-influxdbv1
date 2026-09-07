@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0
+
+- Add option to configure Host and Service template measurement
+- Improve status query for connection validation
+
 ## v1.0.0
 
 - Raise minimum requirements to PHP 8.2
