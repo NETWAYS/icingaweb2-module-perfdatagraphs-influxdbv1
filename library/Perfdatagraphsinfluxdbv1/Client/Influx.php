@@ -324,6 +324,9 @@ class Influx
      */
     protected function getAggregateWindow(string $from, array $count): int
     {
+        if (empty($count)) {
+            return 0;
+        }
         // Since all time series are part of the same check, they have the same count
         $numOfDatapoints = end($count);
 
@@ -401,8 +404,11 @@ class Influx
                 return new static(
                     baseURI: $default['api_url'],
                     timeout: $default['api_timeout'],
-                    tlsVerify: true,
                     maxDataPoints: $default['api_max_data_points'],
+                    tlsVerify: true,
+                    database: '',
+                    hostnameMeasurement: $default['writer_host_template_measurement'],
+                    servicenameMeasurement: $default['writer_service_template_measurement'],
                     hostnameTag: $default['writer_host_name_template_tag'],
                     servicenameTag: $default['writer_service_name_template_tag'],
                     auth: [],
